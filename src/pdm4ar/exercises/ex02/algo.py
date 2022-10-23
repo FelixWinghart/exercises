@@ -27,7 +27,7 @@ class DepthFirst(GraphSearch):
         q = [start]                 #Queue with the starting state (ToDo)
         v = []                      #Visited set
         path = []
-        #parent[start] = None
+        shortest_path = []
 
         while q:       #While there is an element in the ToDo list, do:
             s = q.pop(0)            #Our current state s is at the first element of the ToDo list
@@ -35,17 +35,19 @@ class DepthFirst(GraphSearch):
             if goal not in path:
                 path.append(s)          #Add current state to the path
             if s == goal:
-                return [path, v]
+                shortest_path = path
+                for iterator in path:
+                    index = path.index(iterator)
+                    for i in range(len(path) - 1, index + 1, -1):
+                        if path[i] in graph[iterator]:
+                            for j in path[index + 1 : i]:
+                                shortest_path.remove(j)
+                            break
+                    if graph[iterator] == set():
+                        shortest_path.remove(iterator)
+                return [shortest_path, v]
             u = 0
-            #if graph[s] in (v + q):
-            #    index = v.index(q[0])
-            #    path -= v[index:]
-            #else:
             for i in sorted(graph[s]):
-                #if i == goal:
-                    #return [path + [i], v + [i]]
-                
-                #if i in (q)
 
                 if i not in (v + q):
                     q.insert(u, i)
@@ -53,9 +55,6 @@ class DepthFirst(GraphSearch):
                     if i == goal:
                         if i not in path:
                             path.append(i)
-                #if i in v:
-                #    index = path.index(i) + 1
-                #    del path[index:]
         return [[], v]
 
 
@@ -66,6 +65,7 @@ class BreadthFirst(GraphSearch):
         q = [start]             #Queue with the starting state (ToDo)
         v = []                  #Visited set
         path = []
+        shortest_path = []
 
         while q:       #While Q is not empty
             s = q.pop(0)            #Remove the first from the ToDo list and add it to S
@@ -73,10 +73,20 @@ class BreadthFirst(GraphSearch):
             if goal not in path:
                 path.append(s)          #Add current state to the path
             if s == goal:
-                return [path, v]
+                shortest_path = path
+                for iterator in path:
+                    index = path.index(iterator)
+                    for i in range(len(path) - 1, index + 1, -1):
+                        if path[i] in graph[iterator]:
+                            for j in path[index + 1 : i]:
+                                shortest_path.remove(j)
+                            break
+                    if graph[iterator] == set():
+                        shortest_path.remove(iterator)
+                return [shortest_path, v]
             for i in sorted(graph[s]):
-                #if i == goal:
-                    #return [path + [i], v + [i]]
+                #if i == 2:
+                #    print(graph[i])
                 if i not in (v + q):
                     q.append(i)
                     if i == goal:
@@ -93,7 +103,6 @@ class IterativeDeepening(GraphSearch):
         path = []
         #d = 1                   #Iterator
         #m = 1
-
         while q:
             s = q.pop(0)
             v.append(s)
